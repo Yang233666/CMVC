@@ -12,7 +12,7 @@ Source code and data sets for the paper: CMVC
 
 ### Usage
 
-#####Run the main code:
+##### Run the main code:
 
 * python CMVC_main_reverb45k.py
 * python CMVC_main_NYT.py
