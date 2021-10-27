@@ -1,10 +1,13 @@
 from helper import *
+import gensim
 from preprocessing import SideInfo  # For processing data and side information
 from embeddings_multi_view import Embeddings
 from utils import *
-import os, argparse, pickle, codecs, ddict
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+import os, argparse, pickle, codecs
+from collections import defaultdict as ddict
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 ''' *************************************** DATASET PREPROCESSING **************************************** '''
+
 
 class CMVC_Main(object):
 
@@ -13,6 +16,7 @@ class CMVC_Main(object):
         self.logger = getLogger(args.name, args.log_dir, args.config_dir)
         self.logger.info('Running {}'.format(args.name))
         self.read_triples()
+
 
     def read_triples(self):
         self.logger.info('Reading Triples')
@@ -24,7 +28,7 @@ class CMVC_Main(object):
         self.isAcronym = {}  # Contains all mentions which can be acronyms
 
         print('dataset:', args.dataset)
-        if args.dataset == 'OPIEC59k':
+        if args.dataset == 'OPIEC':
             print('load OPIEC_dataset ... ')
             self.triples_list = pickle.load(open(args.data_path, 'rb'))
 
@@ -89,6 +93,63 @@ class CMVC_Main(object):
         print('self.true_clust2ent:', len(self.true_clust2ent))
         print('self.true_ent2clust:', len(self.true_ent2clust))
 
+        folder = '../file/' + args.dataset + '/'
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        fname1, fname2 = '../file/' + args.dataset + '/self.ent2true_link_list', '../file/' + args.dataset + '/self.ent2true_link'
+        if not checkFile(fname1) or not checkFile(fname2):
+            print('generate ent2true_link_dict')
+            self.ent2true_link_list = dict()
+            for trp in self.triples_list:
+                sub, obj = trp['triple'][0], trp['triple'][2]
+                if args.dataset == 'OPIEC':
+                    true_sub_link, true_obj_link = trp['subject_wiki_link'], trp['object_wiki_link']
+                else:
+                    true_sub_link, true_obj_link = trp['true_sub_link'], trp['true_obj_link']
+                if self.ent2true_link_list.__contains__(sub):
+                    if true_sub_link in self.ent2true_link_list[sub]:
+                        true_link_index = self.ent2true_link_list[sub].index(true_sub_link)
+                        self.ent2true_link_list[sub][int(true_link_index) + 1] += 1
+                    else:
+                        self.ent2true_link_list[sub].append(true_sub_link)
+                        self.ent2true_link_list[sub].append(1)
+                else:
+                    self.ent2true_link_list.update({sub: list()})
+                    self.ent2true_link_list[sub].append(true_sub_link)
+                    self.ent2true_link_list[sub].append(1)
+                if self.ent2true_link_list.__contains__(obj):
+                    if true_obj_link in self.ent2true_link_list[obj]:
+                        true_link_index = self.ent2true_link_list[obj].index(true_obj_link)
+                        self.ent2true_link_list[obj][int(true_link_index) + 1] += 1
+                    else:
+                        self.ent2true_link_list[obj].append(true_obj_link)
+                        self.ent2true_link_list[obj].append(1)
+                else:
+                    self.ent2true_link_list.update({obj: list()})
+                    self.ent2true_link_list[obj].append(true_obj_link)
+                    self.ent2true_link_list[obj].append(1)
+
+            self.ent2true_link = dict()
+            for entity, true_link_list in self.ent2true_link_list.items():
+                times = 0
+                for i in range(len(true_link_list)):
+                    if i % 2 == 0:
+                        continue
+                    else:
+                        if int(true_link_list[i]) > times:
+                            times = int(true_link_list[i])
+                        else:
+                            continue
+                true_link = true_link_list[true_link_list.index(times) - 1]
+                self.ent2true_link.update({entity: true_link})
+            pickle.dump(self.ent2true_link_list, open(fname1, 'wb'))
+            pickle.dump(self.ent2true_link, open(fname2, 'wb'))
+        else:
+            print('load ent2true_link_dict')
+            self.ent2true_link_list = pickle.load(open(fname1, 'rb'))
+            self.ent2true_link = pickle.load(open(fname2, 'rb'))
+
     def get_sideInfo(self):
         self.logger.info('Side Information Acquisition')
         fname = self.p.out_path + self.p.file_sideinfo_pkl
@@ -132,8 +193,8 @@ class CMVC_Main(object):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='CESI: Canonicalizing Open Knowledge Bases using Embeddings and Side Information')
-    parser.add_argument('-data', dest='dataset', default='OPIEC59k', help='Dataset to run CESI on')
-    parser.add_argument('-split', dest='split', default='test', help='Dataset split for evaluation')
+    parser.add_argument('-data', dest='dataset', default='reverb45k_change', help='Dataset to run CESI on:base,ambiguous,reverb45k')
+    parser.add_argument('-split', dest='split', default='test_read', help='Dataset split for evaluation')
     parser.add_argument('-data_dir', dest='data_dir', default='../data', help='Data directory')
     parser.add_argument('-out_dir', dest='out_dir', default='../output', help='Directory to store CESI output')
     parser.add_argument('-config_dir', dest='config_dir', default='../config', help='Config directory')
@@ -168,6 +229,7 @@ if __name__ == '__main__':
     parser.add_argument('--use_cluster_learning', default=False)
     parser.add_argument('--use_cross_seed', default=True)
     parser.add_argument('--combine_seed_and_train_data', default=False)
+
     parser.add_argument('--use_soft_learning', default=False)
 
     parser.add_argument('--update_seed', default=False)
@@ -222,7 +284,7 @@ if __name__ == '__main__':
     parser.add_argument('-init', '--init_checkpoint', default=None, type=str)
     parser.add_argument('--warm_up_steps', default=None, type=int)
 
-    parser.add_argument('--save_checkpoint_steps', default=1000, type=int)
+    parser.add_argument('--save_checkpoint_steps', default=10000, type=int)
     parser.add_argument('--valid_steps', default=10000, type=int)
     parser.add_argument('--log_steps', default=100, type=int, help='train log every xx steps')
     parser.add_argument('--test_log_steps', default=1000, type=int, help='valid/test log every xx steps')

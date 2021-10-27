@@ -3,8 +3,9 @@ import gensim
 from preprocessing import SideInfo  # For processing data and side information
 from embeddings_multi_view import Embeddings
 from utils import *
-import os, argparse, pickle, codecs, ddict
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+import os, argparse, pickle, codecs
+from collections import defaultdict as ddict
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 ''' *************************************** DATASET PREPROCESSING **************************************** '''
 
 
@@ -25,9 +26,11 @@ class CMVC_Main(object):
         self.amb_ent = ddict(int)  # Contains ambiguous entities in the dataset
         self.amb_mentions = {}  # Contains all ambiguous mentions
         self.isAcronym = {}  # Contains all mentions which can be acronyms
+        print('fname:', fname)
+        self.sub_uni2triple_dict = dict()
 
         print('dataset:', args.dataset)
-        if args.dataset == 'OPIEC59k':
+        if args.dataset == 'OPIEC':
             print('load OPIEC_dataset ... ')
             self.triples_list = pickle.load(open(args.data_path, 'rb'))
 
@@ -35,9 +38,40 @@ class CMVC_Main(object):
             self.true_ent2clust = ddict(set)
             for trp in self.triples_list:
                 sub_u = trp['triple_unique'][0]
+                # self.true_ent2clust[sub_u].add(trp['true_sub_link'])
                 self.true_ent2clust[sub_u].add(trp['subject_wiki_link'])
             self.true_clust2ent = invertDic(self.true_ent2clust, 'm2os')
 
+        elif args.dataset == 'NYTimes2018':
+            if not checkFile(fname):
+                print('load NYTimes2018 dataset ... ')
+                args.data_path = args.data_dir + '/' + args.dataset + '/' + args.split  # Path to the dataset
+                print('args.data_path:', args.data_path)
+                if not checkFile(fname):
+                    with codecs.open(args.data_path, encoding='utf-8', errors='ignore') as f:
+                        for line in f:
+                            trp = json.loads(line.strip())
+                            sub, rel, obj = map(str, trp['triple'])
+                            trp['triple'] = [sub, rel, obj]
+                            trp['triple_unique'] = [sub + '|' + str(trp['_id']), rel + '|' + str(trp['_id']),
+                                                    obj + '|' + str(trp['_id'])]
+                            sub_u = trp['triple_unique'][0]
+                            self.triples_list.append(trp)
+                            if sub_u not in self.sub_uni2triple_dict:
+                                self.sub_uni2triple_dict[sub_u] = trp
+                print('before self.triples_list:', type(self.triples_list), len(self.triples_list))
+                self.triples_list = self.triples_list[0:34000]
+                print('after self.triples_list:', type(self.triples_list), len(self.triples_list))
+                with open(fname, 'w') as f:
+                    f.write('\n'.join([json.dumps(triple) for triple in self.triples_list]))
+                    self.logger.info('\tCached triples')
+            else:
+                self.logger.info('\tLoading cached triples')
+                with open(fname) as f:
+                    self.triples_list = [json.loads(triple) for triple in f.read().split('\n')]
+            print('self.triples_list:', type(self.triples_list), len(self.triples_list))
+            self.true_ent2clust = ddict(set)
+            self.true_clust2ent = invertDic(self.true_ent2clust, 'm2os')
         else:
             if not checkFile(fname):
                 with codecs.open(args.data_path, encoding='utf-8', errors='ignore') as f:
@@ -102,6 +136,7 @@ class CMVC_Main(object):
 
         if not checkFile(fname):
             self.side_info = SideInfo(self.p, self.triples_list)
+
             del self.side_info.file
             pickle.dump(self.side_info, open(fname, 'wb'))
             self.logger.info('\tCached Side Information')
@@ -115,9 +150,25 @@ class CMVC_Main(object):
         fname1 = self.p.out_path + self.p.file_entEmbed
         fname2 = self.p.out_path + self.p.file_relEmbed
 
+        if args.dataset == 'NYTimes2018':
+            fname = '../file/' + self.p.dataset + '/cesi_clust2ent'
+            if os.path.exists(fname):
+                cesi_clust2ent = pickle.load(open(fname, 'rb'))
+                cesi_ent2clust = invertDic(cesi_clust2ent, 'm2os')
+                print('cesi_clust2ent:', type(cesi_clust2ent), len(cesi_clust2ent))
+                print('cesi_ent2clust:', type(cesi_ent2clust), len(cesi_ent2clust))
+                self.true_ent2clust = {}
+                for trp in self.triples_list:
+                    sub_u, sub = trp['triple_unique'][0], trp['triple'][0]
+                    self.true_ent2clust[sub_u] = cesi_ent2clust[self.side_info.ent2id[sub]]
+                self.true_clust2ent = invertDic(self.true_ent2clust, 'm2os')
+                print('self.true_clust2ent:', len(self.true_clust2ent))
+                print('self.true_ent2clust:', len(self.true_ent2clust))
+
         if not checkFile(fname1) or not checkFile(fname2):
             embed = Embeddings(self.p, self.side_info, self.logger, true_ent2clust=self.true_ent2clust,
-                               true_clust2ent=self.true_clust2ent, triple_list=self.triples_list)
+                               true_clust2ent=self.true_clust2ent, sub_uni2triple_dict=self.sub_uni2triple_dict,
+                               triple_list=self.triples_list)
             embed.fit()
 
             self.ent2embed = embed.ent2embed  # Get the learned NP embeddings
@@ -133,8 +184,8 @@ class CMVC_Main(object):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='CESI: Canonicalizing Open Knowledge Bases using Embeddings and Side Information')
-    parser.add_argument('-data', dest='dataset', default='OPIEC59k', help='Dataset to run CESI on')
-    parser.add_argument('-split', dest='split', default='test', help='Dataset split for evaluation')
+    parser.add_argument('-data', dest='dataset', default='NYTimes2018', help='Dataset to run CESI on')
+    parser.add_argument('-split', dest='split', default='newyorktimes_openie_arts.json', help='Dataset split for evaluation')
     parser.add_argument('-data_dir', dest='data_dir', default='../data', help='Data directory')
     parser.add_argument('-out_dir', dest='out_dir', default='../output', help='Directory to store CESI output')
     parser.add_argument('-config_dir', dest='config_dir', default='../config', help='Config directory')
@@ -161,15 +212,13 @@ if __name__ == '__main__':
 
     parser.add_argument('--use_assume', default=True)
     parser.add_argument('--use_Entity_linking_dict', default=True)
-    parser.add_argument('--input', default='relation', choices=['entity', 'relation'])
+    parser.add_argument('--input', default='entity', choices=['entity', 'relation'])
 
     parser.add_argument('--use_Embedding_model', default=True)
     parser.add_argument('--relation_view_seed_is_web', default=True)
     parser.add_argument('--view_version', default=1.2)
     parser.add_argument('--use_cluster_learning', default=False)
     parser.add_argument('--use_cross_seed', default=True)
-    parser.add_argument('--combine_seed_and_train_data', default=False)
-
     parser.add_argument('--use_soft_learning', default=False)
 
     parser.add_argument('--update_seed', default=False)
@@ -177,10 +226,9 @@ if __name__ == '__main__':
 
     parser.add_argument('--use_bert_update_seeds', default=False)
     parser.add_argument('--use_new_embedding', default=False)
-
     parser.add_argument('--max_steps', default=50000, type=int)
-    parser.add_argument('--turn_to_seed', default=1000, type=int)
-    parser.add_argument('--seed_max_steps', default=2000, type=int)
+    parser.add_argument('--turn_to_seed', default=2000, type=int)
+    parser.add_argument('--seed_max_steps', default=1000, type=int)
     parser.add_argument('--update_seed_steps', default=6000, type=int)
 
     parser.add_argument('--get_new_cross_seed', default=True)
@@ -244,9 +292,11 @@ if __name__ == '__main__':
     parser.add_argument('-true_seed_num', dest='true_seed_num', default=2361, type=int)
     args = parser.parse_args()
 
-    # if args.name == None: args.name = args.dataset + '_' + args.split + '_' + time.strftime(
-    #     "%d_%m_%Y") + '_' + time.strftime("%H:%M:%S")
-    if args.name == None: args.name = args.dataset + '_' + args.split + '_' + '1'
+    if args.dataset == 'NYTimes2018':
+        if args.name == None: args.name = args.dataset + '_' + '1'
+    else:
+        if args.name == None: args.name = args.dataset + '_' + args.split + '_' + '1'
+
 
     args.file_triples = '/triples.txt'  # Location for caching triples
     args.file_entEmbed = '/embed_ent.pkl'  # Location for caching learned embeddings for noun phrases
@@ -262,7 +312,8 @@ if __name__ == '__main__':
     print('args.log_dir:', args.log_dir)
     print('args.out_path:', args.out_path)
     print('args.reset:', args.reset)
-    args.data_path = args.data_dir + '/' + args.dataset + '/' + args.dataset + '_' + args.split  # Path to the dataset
+    if args.dataset != 'NYTimes2018':
+        args.data_path = args.data_dir + '/' + args.dataset + '/' + args.dataset + '_' + args.split  # Path to the dataset
     if args.reset: os.system('rm -r {}'.format(args.out_path))  # Clear cached files if requeste
     if not os.path.isdir(args.out_path): os.system(
         'mkdir -p ' + args.out_path)  # Create the output directory if doesn't exist
