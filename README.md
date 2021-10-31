@@ -8,7 +8,8 @@ Source code and data sets for the paper: CMVC
 * Dependencies can be installed using requirements.txt
 
 ### Data sets
-* Datasets ReVerb45k and OPIEC59K are included with the repository.
+* Please download two data sets (i.e., ReVerb45K and OPIEC59K) from the following webpage: 
+* https://drive.google.com/file/d/12naKrTctiV1O2e5chdMU2CTUzZVKMgp5/view?usp=sharing
 
 ### Usage
 
