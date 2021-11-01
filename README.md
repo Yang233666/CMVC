@@ -8,8 +8,11 @@ Source code and data sets for the paper: CMVC
 * Dependencies can be installed using requirements.txt
 
 ### Data sets
-* Please download two data sets (i.e., ReVerb45K and OPIEC59K) from this webpage: 
+* Please download the ReVerb45K and OPIEC59K data sets from this webpage: 
 https://drive.google.com/file/d/12naKrTctiV1O2e5chdMU2CTUzZVKMgp5/view?usp=sharing
+
+* Please download the NYTimes2018 data set from the webpage of its original authors: 
+https://home.cse.ust.hk/~xlinai/ICDE2019_data.html
 
 ### Usage
 
