@@ -1,4 +1,4 @@
-import os, sys, logging, logging.config
+import os, sys
 import numpy as np, json
 from nltk.tokenize import word_tokenize
 import pathlib
@@ -63,21 +63,3 @@ def getEmbeddings(model, phr_list, embed_dims):
     oov_rate = oov_num / all_num
     print('oov rate:', oov_rate, 'oov num:', oov_num, 'all num:', all_num)
     return np.array(embed_list)
-
-
-def getLogger(name, log_dir, config_dir):
-    config_dict = json.load(open(config_dir + '/log_config.json'))
-
-    if os.path.isdir(log_dir) == False:  # Make log_dir if doesn't exist
-        os.system('mkdir {}'.format(log_dir))
-
-    config_dict['handlers']['file_handler']['filename'] = log_dir + '/' + name
-    logging.config.dictConfig(config_dict)
-    logger = logging.getLogger(name)
-
-    std_out_format = '%(asctime)s - [%(levelname)s] - %(message)s'
-    consoleHandler = logging.StreamHandler(sys.stdout)
-    consoleHandler.setFormatter(logging.Formatter(std_out_format))
-    logger.addHandler(consoleHandler)
-
-    return logger

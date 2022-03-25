@@ -188,10 +188,9 @@ class Embeddings(object):
     Learns embeddings for NPs and relation phrases
     """
 
-    def __init__(self, params, side_info, logger, true_ent2clust, true_clust2ent, sub_uni2triple_dict=None,
+    def __init__(self, params, side_info, true_ent2clust, true_clust2ent, sub_uni2triple_dict=None,
                  triple_list=None):
         self.p = params
-        self.logger = logger
 
         self.side_info = side_info
         self.ent2embed = {}  # Stores final embeddings learned for noun phrases
@@ -366,7 +365,7 @@ class Embeddings(object):
                 entity_embedding, relation_embedding = self.E_init, self.R_init
                 print('self.training_time', 'use pre-trained crawl embeddings ... ')
 
-                TEM = Train_Embedding_Model(self.p, self.side_info, self.logger, entity_embedding, relation_embedding,
+                TEM = Train_Embedding_Model(self.p, self.side_info, entity_embedding, relation_embedding,
                                             relation_seed_pair_list, self.new_seed_trpIds, self.new_seed_sim)
                 self.entity_embedding, self.relation_embedding = TEM.train()
 
@@ -421,7 +420,7 @@ class Embeddings(object):
                         input_list = self.side_info.rel_list
                     K = K_init  # just for cesi_main_opiec_2
                     print('K:', K)
-                    BM = BERT_Model(self.p, self.side_info, self.logger, input_list, self.label,
+                    BM = BERT_Model(self.p, self.side_info, input_list, self.label,
                                     self.true_ent2clust, self.true_clust2ent, 0,
                                     BERT_self_training_time, self.sub_uni2triple_dict, self.rel_id2sentence_list, K)
                     self.label, K_init = BM.fine_tune()

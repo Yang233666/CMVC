@@ -62,9 +62,8 @@ class Train_Embedding_Model(object):
     Learns embeddings for NPs and relation phrases
     """
 
-    def __init__(self, params, side_info, logger, E_init, R_init, seed_pair, new_seed_triples, new_seed_sim):
+    def __init__(self, params, side_info, E_init, R_init, seed_pair, new_seed_triples, new_seed_sim):
         self.p = params
-        self.logger = logger
         self.side_info = side_info
         self.E_init = E_init
         self.R_init = R_init

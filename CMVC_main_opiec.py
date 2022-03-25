@@ -11,13 +11,9 @@ class CMVC_Main(object):
 
     def __init__(self, args):
         self.p = args
-        self.logger = getLogger(args.name, args.log_dir, args.config_dir)
-        self.logger.info('Running {}'.format(args.name))
         self.read_triples()
 
     def read_triples(self):
-        self.logger.info('Reading Triples')
-
         fname = self.p.out_path + self.p.file_triples  # File for storing processed triples
         self.triples_list = []  # List of all triples in the dataset
         self.amb_ent = ddict(int)  # Contains ambiguous entities in the dataset
@@ -60,9 +56,7 @@ class CMVC_Main(object):
 
                 with open(fname, 'w') as f:
                     f.write('\n'.join([json.dumps(triple) for triple in self.triples_list]))
-                    self.logger.info('\tCached triples')
             else:
-                self.logger.info('\tLoading cached triples')
                 with open(fname) as f:
                     self.triples_list = [json.loads(triple) for triple in f.read().split('\n')]
 
@@ -91,32 +85,22 @@ class CMVC_Main(object):
         print('self.true_ent2clust:', len(self.true_ent2clust))
 
     def get_sideInfo(self):
-        self.logger.info('Side Information Acquisition')
         fname = self.p.out_path + self.p.file_sideinfo_pkl
-        if self.p.use_assume:
-            self.logger.info('use assume...')
-        else:
-            self.logger.info('do not use assume...')
-
 
         if not checkFile(fname):
             self.side_info = SideInfo(self.p, self.triples_list)
 
             del self.side_info.file
             pickle.dump(self.side_info, open(fname, 'wb'))
-            self.logger.info('\tCached Side Information')
         else:
-            self.logger.info('\tLoading cached Side Information')
             self.side_info = pickle.load(open(fname, 'rb'))
 
     def embedKG(self):
-        self.logger.info("Embedding NP and relation phrases")
-
         fname1 = self.p.out_path + self.p.file_entEmbed
         fname2 = self.p.out_path + self.p.file_relEmbed
 
         if not checkFile(fname1) or not checkFile(fname2):
-            embed = Embeddings(self.p, self.side_info, self.logger, true_ent2clust=self.true_ent2clust,
+            embed = Embeddings(self.p, self.side_info, true_ent2clust=self.true_ent2clust,
                                true_clust2ent=self.true_clust2ent, triple_list=self.triples_list)
             embed.fit()
 
@@ -126,7 +110,6 @@ class CMVC_Main(object):
             pickle.dump(self.ent2embed, open(fname1, 'wb'))
             pickle.dump(self.rel2embed, open(fname2, 'wb'))
         else:
-            self.logger.info('\tLoading cached Embeddings')
             self.ent2embed = pickle.load(open(fname1, 'rb'))
             self.rel2embed = pickle.load(open(fname2, 'rb'))
 
@@ -137,10 +120,6 @@ if __name__ == '__main__':
     parser.add_argument('-split', dest='split', default='test', help='Dataset split for evaluation')
     parser.add_argument('-data_dir', dest='data_dir', default='../data', help='Data directory')
     parser.add_argument('-out_dir', dest='out_dir', default='../output', help='Directory to store CESI output')
-    parser.add_argument('-config_dir', dest='config_dir', default='../config', help='Config directory')
-    parser.add_argument('-log_dir', dest='log_dir', default='../log', help='Directory for dumping log files')
-    parser.add_argument('-ppdb_url', dest='ppdb_url', default='http://localhost:9997/',
-                        help='Address of PPDB server')
     parser.add_argument('-reset', dest="reset", action='store_true', default=True,
                         help='Clear the cached files (Start a fresh run)')
     parser.add_argument('-name', dest='name', default=None, help='Assign a name to the run')
@@ -257,11 +236,9 @@ if __name__ == '__main__':
     args.file_relClust = '/cluster_rel.txt'  # Location for caching Relation clustering results
     args.file_sideinfo = '/side_info.txt'  # Location for caching side information extracted for the KG (for display)
     args.file_sideinfo_pkl = '/side_info.pkl'  # Location for caching side information extracted for the KG (binary)
-    args.file_hyperparams = '/hyperparams.json'  # Location for loading hyperparameters
     args.file_results = '/results.json'  # Location for loading hyperparameters
 
     args.out_path = args.out_dir + '/' + args.name  # Directory for storing output
-    print('args.log_dir:', args.log_dir)
     print('args.out_path:', args.out_path)
     print('args.reset:', args.reset)
     args.data_path = args.data_dir + '/' + args.dataset + '/' + args.dataset + '_' + args.split  # Path to the dataset

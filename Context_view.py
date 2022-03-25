@@ -34,11 +34,10 @@ class BertClassificationModel(nn.Module):
 
 class BERT_Model(object):
 
-    def __init__(self, params, side_info, logger, input_list, cluster_predict_list, true_ent2clust, true_clust2ent,
+    def __init__(self, params, side_info, input_list, cluster_predict_list, true_ent2clust, true_clust2ent,
                  model_training_time, BERT_self_training_time, sub_uni2triple_dict=None, rel_id2sentence_list=None, K=0):
         self.p = params
         self.side_info = side_info
-        self.logger = logger
         self.input_list = input_list
         self.true_ent2clust, self.true_clust2ent = true_ent2clust, true_clust2ent
         self.model_training_time = model_training_time
