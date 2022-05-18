@@ -346,7 +346,7 @@ class Embeddings(object):
 
         relation_seed_pair_list = self.all_seed_pair_list
         relation_seed_cluster_list = seed_pair2cluster(relation_seed_pair_list, clean_ent_list)
-        print('relation view seed :')
+        print('fact view seed :')
         cluster_test(self.p, self.side_info, relation_seed_cluster_list, self.true_ent2clust, self.true_clust2ent,
                      print_or_not=True)
         self.seed_trpIds, self.seed_sim = pair2triples(relation_seed_pair_list, clean_ent_list, self.side_info.ent2id,
@@ -383,11 +383,13 @@ class Embeddings(object):
             for id in self.side_info.id2ent.keys(): self.ent2embed[id] = self.E_init[id]
             for id in self.side_info.id2rel.keys(): self.rel2embed[id] = self.R_init[id]
 
-
-        context_view_label = all_cluster_list
-        print('context_view_seed : web_entity + EL')
-        cluster_test(self.p, self.side_info, context_view_label, self.true_ent2clust, self.true_clust2ent,
-                         print_or_not=True)
+		if self.p.input == 'entity':
+			context_view_label = all_cluster_list
+			print('context_view_seed : web_entity + EL')
+			cluster_test(self.p, self.side_info, context_view_label, self.true_ent2clust, self.true_clust2ent, print_or_not=True)
+		else:
+			context_view_label = context_relation_cluster_list
+			print('context_view_seed : web_relation + AMIE')
 
         folder = 'multi_view/context_view_' + str(self.p.input)
         print('self.p.input:', self.p.input)
