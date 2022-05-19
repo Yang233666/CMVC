@@ -457,21 +457,12 @@ class Embeddings(object):
         print('self.context_view_embed:', len(self.context_view_embed))
 
         print('fact view: ')
-        # threshold_or_cluster = 'threshold'
-        threshold_or_cluster = 'cluster'
-        if threshold_or_cluster == 'threshold':
-            if self.p.dataset == 'OPIEC59k':
-                cluster_threshold_real = 0.29
-            else:
-                cluster_threshold_real = 0.35
+        if self.p.dataset == 'OPIEC59k':
+            cluster_threshold_real = 490
         else:
-            if self.p.dataset == 'OPIEC59k':
-                cluster_threshold_real = 490
-            else:
-                cluster_threshold_real = 6700
+            cluster_threshold_real = 6700
         print('cluster_threshold_real:', cluster_threshold_real)
-        labels, clusters_center = HAC_getClusters(self.p, self.relation_view_embed, cluster_threshold_real, False,
-                                                  threshold_or_cluster=threshold_or_cluster)
+        labels, clusters_center = HAC_getClusters(self.p, self.relation_view_embed, cluster_threshold_real, False)
         cluster_predict_list = list(labels)
         ave_prec, ave_recall, ave_f1, macro_prec, micro_prec, pair_prec, macro_recall, micro_recall, \
         pair_recall, macro_f1, micro_f1, pair_f1, model_clusters, model_Singletons, gold_clusters, gold_Singletons \
@@ -493,8 +484,7 @@ class Embeddings(object):
         else:
             cluster_threshold_real = 7064
         print('cluster_threshold_real:', cluster_threshold_real)
-        labels, clusters_center = HAC_getClusters(self.p, self.context_view_embed, cluster_threshold_real, True,
-                                                      threshold_or_cluster=threshold_or_cluster)
+        labels, clusters_center = HAC_getClusters(self.p, self.context_view_embed, cluster_threshold_real, True)
         cluster_predict_list = list(labels)
         ave_prec, ave_recall, ave_f1, macro_prec, micro_prec, pair_prec, macro_recall, micro_recall, \
         pair_recall, macro_f1, micro_f1, pair_f1, model_clusters, model_Singletons, gold_clusters, gold_Singletons \
@@ -514,11 +504,11 @@ class Embeddings(object):
         for i in range(30):
             print('test time:', i)
             if self.p.dataset == 'OPIEC59k':
-                threshold, n_cluster = 490, 490
+                n_cluster = 490, 490
             elif self.p.dataset == 'reverb45k' or self.p.dataset == 'reverb45k_change':
-                threshold, n_cluster = 6700, 6700
+                n_cluster = 6700, 6700
             else:
-                threshold, n_cluster = 5700, 5700
+                n_cluster = 5700, 5700
 
             print('n_cluster:', type(n_cluster), n_cluster)
 
