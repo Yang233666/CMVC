@@ -504,11 +504,11 @@ class Embeddings(object):
         for i in range(30):
             print('test time:', i)
             if self.p.dataset == 'OPIEC59k':
-                n_cluster = 490, 490
+                n_cluster = 490
             elif self.p.dataset == 'reverb45k' or self.p.dataset == 'reverb45k_change':
-                n_cluster = 6700, 6700
+                n_cluster = 6700
             else:
-                n_cluster = 5700, 5700
+                n_cluster = 5700
 
             print('n_cluster:', type(n_cluster), n_cluster)
 
