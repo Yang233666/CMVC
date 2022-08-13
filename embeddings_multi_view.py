@@ -457,10 +457,18 @@ class Embeddings(object):
         print('self.context_view_embed:', len(self.context_view_embed))
 
         print('fact view: ')
-        if self.p.dataset == 'OPIEC59k':
-            cluster_threshold_real = 490
+		# threshold_or_cluster = 'threshold'
+        threshold_or_cluster = 'cluster'
+        if threshold_or_cluster == 'threshold':
+            if self.p.dataset == 'OPIEC59k':
+                cluster_threshold_real = 0.29
+            else:
+                cluster_threshold_real = 0.35
         else:
-            cluster_threshold_real = 6700
+            if self.p.dataset == 'OPIEC59k':
+                cluster_threshold_real = 490
+            else:
+                cluster_threshold_real = 6700
         print('cluster_threshold_real:', cluster_threshold_real)
         labels, clusters_center = HAC_getClusters(self.p, self.relation_view_embed, cluster_threshold_real, False)
         cluster_predict_list = list(labels)
