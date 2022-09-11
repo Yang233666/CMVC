@@ -1,6 +1,5 @@
 # Multi-View Clustering for Open Knowledge Base Canonicalization
 
-Source code and data sets for the paper: Multi-View Clustering for Open Knowledge Base Canonicalization (KDD 2022)
 Source code and data sets for the [SIGKDD 2022](https://kdd.org/kdd2022/) paper: [Multi-View Clustering for Open Knowledge Base Canonicalization](https://dl.acm.org/doi/pdf/10.1145/3534678.3539449)
 
 ### Dependencies
@@ -24,6 +23,12 @@ https://home.cse.ust.hk/~xlinai/ICDE2019_data.html
 * python CMVC_main_opiec.py
 
 
-### License
-
-MIT © Richard McRichface
+### Citation
+Please cite the following paper if you use this code in your work. 
+@inproceedings{shen2022multi,
+  title={Multi-View Clustering for Open Knowledge Base Canonicalization},
+  author={Shen, Wei and Yang, Yang and Liu, Yinan},
+  booktitle={Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining},
+  pages={1578--1588},
+  year={2022}
+}
