@@ -26,9 +26,6 @@ https://home.cse.ust.hk/~xlinai/ICDE2019_data.html
 
 Yang Yang - [Email](y2@mail.nankai.edu.cn)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 ### Citation
 Please cite the following paper if you use this code in your work. 
 
@@ -41,3 +38,4 @@ Please cite the following paper if you use this code in your work.
   year={2022}
 }
 ```
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
