@@ -2,6 +2,22 @@
 
 Source code and data sets for the [SIGKDD 2022](https://kdd.org/kdd2022/) paper: [Multi-View Clustering for Open Knowledge Base Canonicalization](https://dl.acm.org/doi/pdf/10.1145/3534678.3539449)
 
+<!-- PROJECT SHIELDS -->
+<!--
+*** I'm using markdown "reference style" links for readability.
+*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
+*** See the bottom of this document for the declaration of the reference variables
+*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+
+
 ### Dependencies
 
 * Compatible with Python 3.6
@@ -25,6 +41,8 @@ https://home.cse.ust.hk/~xlinai/ICDE2019_data.html
 
 ### Citation
 Please cite the following paper if you use this code in your work. 
+
+```bibtex
 @inproceedings{shen2022multi,
   title={Multi-View Clustering for Open Knowledge Base Canonicalization},
   author={Shen, Wei and Yang, Yang and Liu, Yinan},
@@ -32,3 +50,4 @@ Please cite the following paper if you use this code in your work.
   pages={1578--1588},
   year={2022}
 }
+```
