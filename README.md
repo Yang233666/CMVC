@@ -1,6 +1,6 @@
-# CMVC
+# Multi-View Clustering for Open Knowledge Base Canonicalization
 
-Source code and data sets for the paper: CMVC
+Source code and data sets for the paper: Multi-View Clustering for Open Knowledge Base Canonicalization (KDD 2022)
 
 ### Dependencies
 
