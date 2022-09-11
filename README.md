@@ -1,6 +1,7 @@
 # Multi-View Clustering for Open Knowledge Base Canonicalization
 
 Source code and data sets for the paper: Multi-View Clustering for Open Knowledge Base Canonicalization (KDD 2022)
+Source code and data sets for the [SIGKDD 2022](https://kdd.org/kdd2022/) paper: [Multi-View Clustering for Open Knowledge Base Canonicalization](https://dl.acm.org/doi/pdf/10.1145/3534678.3539449)
 
 ### Dependencies
 
