@@ -1,14 +1,5 @@
-# Multi-View Clustering for Open Knowledge Base Canonicalization
-
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
+# Multi-View Clustering for Open Knowledge Base Canonicalization
 
 Source code and data sets for the [SIGKDD 2022](https://kdd.org/kdd2022/) paper: [Multi-View Clustering for Open Knowledge Base Canonicalization](https://dl.acm.org/doi/pdf/10.1145/3534678.3539449)
 
