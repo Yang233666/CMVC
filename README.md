@@ -24,7 +24,7 @@ https://home.cse.ust.hk/~xlinai/ICDE2019_data.html
 
 ### Contact
 
-Yang Yang - [Yang Yang](y2@mail.nankai.edu.cn)
+[Yang Yang](y2@mail.nankai.edu.cn)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
