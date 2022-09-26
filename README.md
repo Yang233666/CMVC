@@ -13,7 +13,7 @@ Source code and data sets for the [SIGKDD 2022](https://kdd.org/kdd2022/) paper:
 https://drive.google.com/file/d/12naKrTctiV1O2e5chdMU2CTUzZVKMgp5/view?usp=sharing
 
 * Please download the NYTimes2018 data set from the webpage of its original authors: 
-https://home.cse.ust.hk/~xlinai/ICDE2019_data.html
+https://heathersherry.github.io/ICDE2019_data.html
 
 ### Usage
 
