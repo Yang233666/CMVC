@@ -9,6 +9,7 @@ Source code and data sets for the [SIGKDD 2022](https://kdd.org/kdd2022/) paper:
 * Dependencies can be installed using requirements.txt
 * Please download the init_dict folder from this webpage: 
 https://drive.google.com/file/d/17xYnisHhpFcYwHgF3-kYquw2ZZqV9-3Y/view?usp=sharing
+* Please download the crawl-300d-2M.vec.zip from https://fasttext.cc/docs/en/english-vectors.html into init_dict. 
 
 ### Data sets
 * Please download the ReVerb45K and OPIEC59K data sets from this webpage: 
