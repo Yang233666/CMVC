@@ -430,11 +430,6 @@ class Embeddings(object):
             else:
                 print('load BERT_fine-tune_', fname1)
                 self.label = pickle.load(open(fname1, 'rb'))
-        old_label, new_label = context_view_label, self.label
-        print('old_label : ')
-        cluster_test(self.p, self.side_info, old_label, self.true_ent2clust, self.true_clust2ent, print_or_not=True)
-        print('new_label : ')
-        cluster_test(self.p, self.side_info, new_label, self.true_ent2clust, self.true_clust2ent, print_or_not=True)
 
         BERT_self_training_time = self.epochs - 1
         fname1 = '../file/' + self.p.dataset + '_' + self.p.split + '/' + folder + '/bert_cls_el_' + str(0) + '_' + str(
