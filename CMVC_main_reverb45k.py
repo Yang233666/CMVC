@@ -86,6 +86,7 @@ class CMVC_Main(object):
         print('self.triples_list:', type(self.triples_list), len(self.triples_list))
         print('self.true_clust2ent:', len(self.true_clust2ent))
         print('self.true_ent2clust:', len(self.true_ent2clust))
+        exit()
 
         folder = '../file/' + args.dataset + '/'
         if not os.path.exists(folder):
@@ -175,11 +176,11 @@ class CMVC_Main(object):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='CESI: Canonicalizing Open Knowledge Bases using Embeddings and Side Information')
-    parser.add_argument('-data', dest='dataset', default='reverb45k_change', help='Dataset to run CESI on:base,ambiguous,reverb45k')
+        description='Multi-View Clustering for Open Knowledge Base Canonicalization')
+    parser.add_argument('-data', dest='dataset', default='reverb45k_change', help='Dataset')
     parser.add_argument('-split', dest='split', default='test_read', help='Dataset split for evaluation')
     parser.add_argument('-data_dir', dest='data_dir', default='../data', help='Data directory')
-    parser.add_argument('-out_dir', dest='out_dir', default='../output', help='Directory to store CESI output')
+    parser.add_argument('-out_dir', dest='out_dir', default='../output', help='Directory to store output')
     parser.add_argument('-reset', dest="reset", action='store_true', default=True,
                         help='Clear the cached files (Start a fresh run)')
     parser.add_argument('-name', dest='name', default=None, help='Assign a name to the run')

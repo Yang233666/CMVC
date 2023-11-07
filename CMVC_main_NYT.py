@@ -165,11 +165,11 @@ class CMVC_Main(object):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='CESI: Canonicalizing Open Knowledge Bases using Embeddings and Side Information')
-    parser.add_argument('-data', dest='dataset', default='NYTimes2018', help='Dataset to run CESI on')
+        description='Multi-View Clustering for Open Knowledge Base Canonicalization')
+    parser.add_argument('-data', dest='dataset', default='NYTimes2018', help='Dataset')
     parser.add_argument('-split', dest='split', default='newyorktimes_openie_arts.json', help='Dataset split for evaluation')
     parser.add_argument('-data_dir', dest='data_dir', default='../data', help='Data directory')
-    parser.add_argument('-out_dir', dest='out_dir', default='../output', help='Directory to store CESI output')
+    parser.add_argument('-out_dir', dest='out_dir', default='../output', help='Directory to store output')
     parser.add_argument('-reset', dest="reset", action='store_true', default=True,
                         help='Clear the cached files (Start a fresh run)')
     parser.add_argument('-name', dest='name', default=None, help='Assign a name to the run')
