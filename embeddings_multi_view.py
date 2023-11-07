@@ -217,7 +217,6 @@ class Embeddings(object):
                         sentence_list += ent_id2sentence_list[self.side_info.ent2id[obj]]
                 sentence_list = list(set(sentence_list))
                 self.rel_id2sentence_list[rel_id] = sentence_list
-        print('self.rel_id2sentence_list:', type(self.rel_id2sentence_list), len(self.rel_id2sentence_list))
 
     def fit(self):
 
@@ -230,9 +229,6 @@ class Embeddings(object):
         clean_ent_list, clean_rel_list = [], []
         for ent in self.side_info.ent_list: clean_ent_list.append(ent.split('|')[0])
         for rel in self.side_info.rel_list: clean_rel_list.append(rel.split('|')[0])
-
-        print('clean_ent_list:', type(clean_ent_list), len(clean_ent_list))
-        print('clean_rel_list:', type(clean_rel_list), len(clean_rel_list))
 
         ''' Intialize embeddings '''
         if self.p.embed_init == 'crawl':
@@ -257,7 +253,6 @@ class Embeddings(object):
             self.R_init = np.random.rand(len(clean_rel_list), self.p.embed_dims)
 
         folder = 'multi_view/relation_view'
-        print('folder:', folder)
         folder_to_make = '../file/' + self.p.dataset + '_' + self.p.split + '/' + folder + '/'
         if not os.path.exists(folder_to_make):
             os.makedirs(folder_to_make)
@@ -269,7 +264,6 @@ class Embeddings(object):
             pickle.dump(self.EL_seed, open(fname_EL, 'wb'))
         else:
             self.EL_seed = pickle.load(open(fname_EL, 'rb'))
-        print('self.EL_seed:', type(self.EL_seed), len(self.EL_seed))
 
         fname_amie = '../file/' + self.p.dataset + '_' + self.p.split + '/amie_rp_seed'
         if not checkFile(fname_amie):
@@ -279,45 +273,17 @@ class Embeddings(object):
             pickle.dump(self.amie_rp_seed, open(fname_amie, 'wb'))
         else:
             self.amie_rp_seed = pickle.load(open(fname_amie, 'rb'))
-        print('self.amie_rp_seed:', type(self.amie_rp_seed), len(self.amie_rp_seed))
 
         web_seed_Jaccard_threshold = 0.015
         fname2_entity = '../file/' + self.p.dataset + '_' + self.p.split + '/WEB_seed/entity/cluster_list_threshold_' + \
                         str(web_seed_Jaccard_threshold) + '_url_max_length_all'
         fname2_relation = '../file/' + self.p.dataset + '_' + self.p.split + '/WEB_seed/relation/cluster_list_threshold_' + \
                           str(web_seed_Jaccard_threshold) + '_url_max_length_all'
-        print('fname2_entity:', fname2_entity)
-        print('fname2_relation:', fname2_relation)
         self.web_entity_cluster_list = pickle.load(open(fname2_entity, 'rb'))
         self.web_relation_cluster_list = pickle.load(open(fname2_relation, 'rb'))
-        print('self.web_entity_cluster_list:', type(self.web_entity_cluster_list),
-              len(self.web_entity_cluster_list),
-              self.web_entity_cluster_list[0:10])
-        print('self.web_relation_cluster_list:', type(self.web_relation_cluster_list),
-              len(self.web_relation_cluster_list),
-              self.web_relation_cluster_list[0:10])
 
         self.web_entity_seed_pair_list = totol_cluster2pair(self.web_entity_cluster_list)
         self.web_relation_seed_pair_list = totol_cluster2pair(self.web_relation_cluster_list)
-        print('self.web_entity_seed_pair_list:', type(self.web_entity_seed_pair_list),
-              len(self.web_entity_seed_pair_list), self.web_entity_seed_pair_list[0:10])
-        print('self.web_relation_seed_pair_list:', type(self.web_relation_seed_pair_list),
-              len(self.web_relation_seed_pair_list), self.web_relation_seed_pair_list[0:10])
-
-        # web_entity_cluster_list = seed_pair2cluster(self.web_entity_seed_pair_list, clean_ent_list)
-        # cluster_test(self.p, self.side_info, web_entity_cluster_list, self.true_ent2clust, self.true_clust2ent,
-        #              print_or_not=True)
-
-        # web_relation_cluster_list = seed_pair2cluster(self.web_relation_seed_pair_list, clean_rel_list)
-        # print('web_relation_cluster_list:', type(web_relation_cluster_list), len(web_relation_cluster_list),
-        #       web_relation_cluster_list[0:10])
-        # print('different web_relation_cluster:', len(list(set(web_relation_cluster_list))))
-        # print()
-
-        # el_cluster_list = seed_pair2cluster(self.EL_seed, clean_ent_list)
-        # print('el_cluster_list:', type(el_cluster_list), len(el_cluster_list), el_cluster_list[0:10])
-        # cluster_test(self.p, self.side_info, el_cluster_list, self.true_ent2clust, self.true_clust2ent,
-        #              print_or_not=True)
 
         self.all_seed_pair_list = []
         for pair in self.web_entity_seed_pair_list:
@@ -334,28 +300,13 @@ class Embeddings(object):
             if pair not in self.context_seed_pair_list:
                 self.context_seed_pair_list.append(pair)
         all_cluster_list = seed_pair2cluster(self.all_seed_pair_list, clean_ent_list)
-        # cluster_test(self.p, self.side_info, all_cluster_list, self.true_ent2clust, self.true_clust2ent,
-        #              print_or_not=True)
-        print('self.context_seed_pair_list:', type(self.context_seed_pair_list), len(self.context_seed_pair_list),
-              self.context_seed_pair_list[0:10])
         context_relation_cluster_list = seed_pair2cluster(self.context_seed_pair_list, clean_rel_list)
-        print('context_relation_cluster_list:', type(context_relation_cluster_list), len(context_relation_cluster_list),
-              context_relation_cluster_list[0:10])
-        print('different context_relation_cluster_list:', len(list(set(context_relation_cluster_list))))
-        print()
 
         relation_seed_pair_list = self.all_seed_pair_list
-        relation_seed_cluster_list = seed_pair2cluster(relation_seed_pair_list, clean_ent_list)
-        print('fact view seed :')
-        cluster_test(self.p, self.side_info, relation_seed_cluster_list, self.true_ent2clust, self.true_clust2ent,
-                     print_or_not=True)
         self.seed_trpIds, self.seed_sim = pair2triples(relation_seed_pair_list, clean_ent_list, self.side_info.ent2id,
                                                        self.side_info.id2ent, self.side_info.ent2triple_id_list,
                                                        self.side_info.trpIds, self.E_init, cos_sim, is_cuda=False,
                                                        high_confidence=False)
-        print('self.seed_trpIds:', type(self.seed_trpIds), len(self.seed_trpIds), self.seed_trpIds[0:30])
-        print('self.seed_sim:', type(self.seed_sim), len(self.seed_sim), self.seed_sim[0:30])
-        print()
 
         if self.p.use_Embedding_model:
             fname1, fname2 = '../file/' + self.p.dataset + '_' + self.p.split + '/' + folder + '/entity_embedding', '../file/' + self.p.dataset + '_' + self.p.split + '/' + folder + '/relation_embedding'
@@ -385,16 +336,11 @@ class Embeddings(object):
 
         if self.p.input == 'entity':
             context_view_label = all_cluster_list
-            print('context_view_seed : web_entity + EL')
             cluster_test(self.p, self.side_info, context_view_label, self.true_ent2clust, self.true_clust2ent, print_or_not=True)
         else:
             context_view_label = context_relation_cluster_list
-            print('context_view_seed : web_relation + AMIE')
 
         folder = 'multi_view/context_view_' + str(self.p.input)
-        print('self.p.input:', self.p.input)
-        print('folder:', folder)
-        print()
         self.epochs = 3
         # self.epochs = 1  # this is the rebuttal mode
         print('self.epochs:', self.epochs)
@@ -448,8 +394,6 @@ class Embeddings(object):
             if id in self.side_info.isSub:
                 self.relation_view_embed.append(self.ent2embed[id])
                 self.context_view_embed.append(self.BERT_CLS[id])
-        print('self.relation_view_embed:', len(self.relation_view_embed))
-        print('self.context_view_embed:', len(self.context_view_embed))
 
         print('fact view: ')
 		# threshold_or_cluster = 'threshold'
