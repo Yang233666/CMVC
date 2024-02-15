@@ -38,12 +38,7 @@ class SideInfo(object):
             self.sentence_List = []
             self.ent2triple_id_list, self.rel2triple_id_list = dict(), dict()
             triple2sentence = dict()
-            if self.p.use_assume:
-                self.triple_str = str('triple')
-                print('use assume...')
-            else:
-                self.triple_str = str('triple_unique')
-                print('do not use assume...')
+            self.triple_str = str('triple')
             triple_num, sentence_num = 0, 0
             for triple in self.triples:  # Get all subject, objects and relations
                 sub, rel, obj = triple[self.triple_str][0], triple[self.triple_str][1], triple[self.triple_str][2]
