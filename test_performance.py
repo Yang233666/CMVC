@@ -7,7 +7,7 @@ from tqdm import tqdm
 ave = True
 # ave = False
 
-def HAC_getClusters(params, embed, cluster_threshold_real, dim_is_bert=False):
+def HAC_getClusters(params, embed, cluster_threshold_real, dim_is_bert=False, threshold_or_cluster='cluster'):
     if dim_is_bert:
         embed_dim = 768
     else:
@@ -19,7 +19,11 @@ def HAC_getClusters(params, embed, cluster_threshold_real, dim_is_bert=False):
                 if not np.isfinite(dist[i]):
                     dist[i] = 0
     clust_res = linkage(dist, method=params.linkage)
-    labels = fcluster(clust_res, t=cluster_threshold_real, criterion='distance') - 1
+    if threshold_or_cluster == 'cluster':
+        labels = fcluster(clust_res, t=cluster_threshold_real, criterion='maxclust') - 1
+    else:
+        labels = fcluster(clust_res, t=cluster_threshold_real, criterion='distance') - 1
+
 
     clusters = [[] for i in range(max(labels) + 1)]
     for i in range(len(labels)):
