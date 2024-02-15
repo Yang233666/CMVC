@@ -86,7 +86,6 @@ class CMVC_Main(object):
         print('self.triples_list:', type(self.triples_list), len(self.triples_list))
         print('self.true_clust2ent:', len(self.true_clust2ent))
         print('self.true_ent2clust:', len(self.true_ent2clust))
-        exit()
 
         folder = '../file/' + args.dataset + '/'
         if not os.path.exists(folder):
