@@ -4,7 +4,8 @@ import numpy as np
 from joblib import Parallel, delayed
 
 # from sklearn.cluster import _k_means
-from sklearn.cluster import _k_means_fast as _k_means
+from sklearn.cluster import _kmeans as _k_means  # _k_means directly caused the error
+# from sklearn.cluster import _k_means_fast as _k_means
 # from sklearn.cluster._k_means import (
 from sklearn.cluster._kmeans import (
 # from sklearn.cluster.k_means_ import (
@@ -291,7 +292,7 @@ def multi_view_spherical_kmeans_single_lloyd(
     # E step view 2: labels assignment
     if p.step_0_use_hac:
         cluster_threshold_real = 0.33
-        labels, clusters_center = HAC_getClusters(p, X_view_2, cluster_threshold_real)
+        labels, clusters_center = HAC_getClusters(p, X_view_2, cluster_threshold_real, threshold_or_cluster='threshold')
         # print('labels:', type(labels), len(labels), labels)
         # labels_2 = list(set(labels))
         # print('labels_2:', len(labels_2), labels_2)
