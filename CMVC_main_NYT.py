@@ -188,7 +188,6 @@ if __name__ == '__main__':
     parser.add_argument('-embed_loc', dest='embed_loc', default='../init_dict/crawl-300d-2M.vec',
                         help='Location of embeddings to be loaded')
 
-    parser.add_argument('--use_assume', default=True)
     parser.add_argument('--use_Entity_linking_dict', default=True)
     parser.add_argument('--input', default='entity', choices=['entity', 'relation'])
 
