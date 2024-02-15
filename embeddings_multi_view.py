@@ -336,7 +336,6 @@ class Embeddings(object):
 
         if self.p.input == 'entity':
             context_view_label = all_cluster_list
-            cluster_test(self.p, self.side_info, context_view_label, self.true_ent2clust, self.true_clust2ent, print_or_not=True)
         else:
             context_view_label = context_relation_cluster_list
 
