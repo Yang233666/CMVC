@@ -395,59 +395,7 @@ class Embeddings(object):
                 self.relation_view_embed.append(self.ent2embed[id])
                 self.context_view_embed.append(self.BERT_CLS[id])
 
-        print('fact view: ')
-		# threshold_or_cluster = 'threshold'
-        threshold_or_cluster = 'cluster'
-        if threshold_or_cluster == 'threshold':
-            if self.p.dataset == 'OPIEC59k':
-                cluster_threshold_real = 0.29
-            else:
-                cluster_threshold_real = 0.35
-        else:
-            if self.p.dataset == 'OPIEC59k':
-                cluster_threshold_real = 490
-            else:
-                cluster_threshold_real = 6700
-        print('cluster_threshold_real:', cluster_threshold_real)
-        labels, clusters_center = HAC_getClusters(self.p, self.relation_view_embed, cluster_threshold_real, False)
-        cluster_predict_list = list(labels)
-        ave_prec, ave_recall, ave_f1, macro_prec, micro_prec, pair_prec, macro_recall, micro_recall, \
-        pair_recall, macro_f1, micro_f1, pair_f1, model_clusters, model_Singletons, gold_clusters, gold_Singletons \
-            = cluster_test(self.p, self.side_info, cluster_predict_list, self.true_ent2clust,
-                           self.true_clust2ent)
-        print('Ave-prec=', ave_prec, 'macro_prec=', macro_prec, 'micro_prec=', micro_prec,
-              'pair_prec=', pair_prec)
-        print('Ave-recall=', ave_recall, 'macro_recall=', macro_recall, 'micro_recall=', micro_recall,
-              'pair_recall=', pair_recall)
-        print('Ave-F1=', ave_f1, 'macro_f1=', macro_f1, 'micro_f1=', micro_f1, 'pair_f1=', pair_f1)
-        print('Model: #Clusters: %d, #Singletons %d' % (model_clusters, model_Singletons))
-        print('Gold: #Clusters: %d, #Singletons %d' % (gold_clusters, gold_Singletons))
-        print()
-        # exit()
-
-        print('context view: ')
-        if self.p.dataset == 'OPIEC59k':
-            cluster_threshold_real = 923
-        else:
-            cluster_threshold_real = 7064
-        print('cluster_threshold_real:', cluster_threshold_real)
-        labels, clusters_center = HAC_getClusters(self.p, self.context_view_embed, cluster_threshold_real, True)
-        cluster_predict_list = list(labels)
-        ave_prec, ave_recall, ave_f1, macro_prec, micro_prec, pair_prec, macro_recall, micro_recall, \
-        pair_recall, macro_f1, micro_f1, pair_f1, model_clusters, model_Singletons, gold_clusters, gold_Singletons \
-            = cluster_test(self.p, self.side_info, cluster_predict_list, self.true_ent2clust,
-                           self.true_clust2ent)
-        print('Ave-prec=', ave_prec, 'macro_prec=', macro_prec, 'micro_prec=', micro_prec,
-              'pair_prec=', pair_prec)
-        print('Ave-recall=', ave_recall, 'macro_recall=', macro_recall, 'micro_recall=', micro_recall,
-              'pair_recall=', pair_recall)
-        print('Ave-F1=', ave_f1, 'macro_f1=', macro_f1, 'micro_f1=', micro_f1, 'pair_f1=', pair_f1)
-        print('Model: #Clusters: %d, #Singletons %d' % (model_clusters, model_Singletons))
-        print('Gold: #Clusters: %d, #Singletons %d' % (gold_clusters, gold_Singletons))
-        print()
-
         print('Model is multi-view spherical-k-means')
-
         for i in range(30):
             print('test time:', i)
             if self.p.dataset == 'OPIEC59k':
