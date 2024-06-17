@@ -28,7 +28,7 @@ https://heathersherry.github.io/ICDE2019_data.html
 
 ### Contact
 
-Yang Yang (`y2@mail.nankai.edu.cn`)
+Yang Yang ~~(`y2@mail.nankai.edu.cn`)~~ (yang.yang@insight-centre.org)
 
 ### Citation
 Please cite the following paper if you use this code in your work. 
