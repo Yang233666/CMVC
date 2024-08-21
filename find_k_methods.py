@@ -707,7 +707,7 @@ def zhao_xu_franti(data, centers, labels):
     )
 
 
-class Inverse_JumpsMethod(object):
+class Log_JumpsMethod(object):
 
     def __init__(self, data, k_list, dim_is_bert):
         self.data = data
