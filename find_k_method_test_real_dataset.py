@@ -4,7 +4,7 @@ import pickle
 import os
 from sklearn import datasets  # 导入库
 from tqdm import tqdm
-from find_k_methods import Inverse_JumpsMethod, JumpsMethod, last_leap, \
+from find_k_methods import Log_JumpsMethod, JumpsMethod, last_leap, \
     last_major_leap_origin, last_leap_origin, jump_method, I_index, aic, elbow_method, bic, \
     calinski_harabasz, classification_entropy, compose_within_between, davies_bouldin, dunn, fukuyama_sugeno,\
     fuzzy_hypervolume,  halkidi_vazirgannis, \
@@ -166,17 +166,17 @@ print('level_one_min, level_one_max, level_one_gap:', level_one_min, level_one_m
 k_list = list(cluster_list)
 
 method2first_cluster_num_dict = dict()
-jm = Inverse_JumpsMethod(data=input_embed, k_list=cluster_list, dim_is_bert=None)
+jm = Log_JumpsMethod(data=input_embed, k_list=cluster_list, dim_is_bert=None)
 
 jm.Distortions(random_state=0)
 distortions = jm.distortions
 jm.Jumps(distortions=distortions)
 jumps = jm.jumps
 
-level_one_Inverse_JumpsMethod = jm.recommended_cluster_number
+level_one_Log_JumpsMethod = jm.recommended_cluster_number
 
-print('Inverse_JumpsMethod k:', level_one_Inverse_JumpsMethod)
-method2first_cluster_num_dict['Inverse_JumpsMethod'] = level_one_Inverse_JumpsMethod
+print('Log_JumpsMethod k:', level_one_Log_JumpsMethod)
+method2first_cluster_num_dict['Log_JumpsMethod'] = level_one_Log_JumpsMethod
 
 jm = JumpsMethod(data=input_embed)
 print('number of dimensions:', jm.p)
@@ -255,7 +255,7 @@ for i in tqdm(range(len(k_list))):
     index_fukuyama_sugeno[i] = fukuyama_sugeno(input_embed, km1.cluster_centers_)
     index_fuzzy_hypervolume[i] = fuzzy_hypervolume(input_embed, km1.cluster_centers_)
 
-print('Inverse_JumpsMethod k:', level_one_Inverse_JumpsMethod)
+print('Log_JumpsMethod k:', level_one_Log_JumpsMethod)
 print('JumpsMethod k:', level_one_JumpsMethod)
 est_k_aic = k_list[elbow_method(index_aic)]
 print('For aic : Selected k =', est_k_aic)
@@ -381,8 +381,8 @@ if dataset == 'OPIEC' or dataset == 'reverb45k_change':
         est_k = 0
         print('level_two_min, level_two_max, level_two_gap:', level_two_min, level_two_max, level_two_gap)
 
-        if method == 'Inverse_JumpsMethod':
-            jm = Inverse_JumpsMethod(data=input_embed, k_list=cluster_list, dim_is_bert=None)
+        if method == 'Log_JumpsMethod':
+            jm = Log_JumpsMethod(data=input_embed, k_list=cluster_list, dim_is_bert=None)
             jm.Distortions(random_state=0)
             distortions = jm.distortions
             jm.Jumps(distortions=distortions)
